@@ -1,6 +1,7 @@
 import { Component } from 'react';
-import './App.css';
 import axios from 'axios';
+import imgUrl from './assets/PIWO.svg';
+import './App.scss';
 
 interface responseItem {
   id: number;
@@ -12,6 +13,8 @@ class App extends Component {
   state = {
     beers: [],
     searchString: localStorage.getItem('searchString') || '',
+    loadingClass: 'loading',
+    resClass: 'results hiding',
   };
   componentDidMount(): void {
     this.search();
@@ -23,6 +26,8 @@ class App extends Component {
       : BASE_URL;
     axios.get(url).then((res) => {
       this.setState({
+        loadingClass: 'loading hiding',
+        resClass: 'results',
         beers: res.data,
       });
     });
@@ -30,16 +35,20 @@ class App extends Component {
   render() {
     return (
       <>
-        <div>
+        <div className="search">
           <input
             type="search"
             value={this.state.searchString}
             onChange={(event) =>
-              this.setState({ searchString: event.target.value })
+              this.setState({ searchString: event.target.value.trim() })
             }
           ></input>
           <button
             onClick={() => {
+              this.setState({
+                loadingClass: 'loading',
+                resClass: 'results hiding',
+              });
               localStorage.setItem('searchString', this.state.searchString);
               this.search();
             }}
@@ -47,7 +56,24 @@ class App extends Component {
             🔍
           </button>
         </div>
-        <div>
+        <div className={this.state.loadingClass}>
+          <div>
+            <img src={imgUrl} className="bubble"></img>
+          </div>
+          <div>
+            <img src={imgUrl} className="bubble"></img>
+          </div>
+          <div>
+            <img src={imgUrl} className="bubble"></img>
+          </div>
+          <div>
+            <img src={imgUrl} className="bubble"></img>
+          </div>
+          <div>
+            <img src={imgUrl} className="bubble"></img>
+          </div>
+        </div>
+        <div className={this.state.resClass}>
           {this.state.beers.map((item: responseItem) => (
             <div key={item.id.toString()}>
               <h2>{item.name}</h2>
