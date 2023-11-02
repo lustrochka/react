@@ -41,6 +41,7 @@
 
 body {
   margin: 0;
+  height: 100vh;
 }
 
 input[type='search']::-webkit-search-decoration,
@@ -104,7 +105,8 @@ input {
 
 .bottom-section {
   background-color: #bf7232;
-  height: 100vh;
+  height: 100%;
+  min-height: 100vh;
   padding-top: 20px;
 }
 
@@ -189,4 +191,19 @@ input {
   border-radius: 50%;
   background-color: white;
   animation: looking 4s infinite;
+}
+
+.arrow {
+  font-size: 55px;
+  position: absolute;
+  top: 250px;
+  &:first-child {
+    left: 0;
+  }
+  &:last-child {
+    right: 0;
+  }
+  &:hover {
+    cursor: pointer;
+  }
 }

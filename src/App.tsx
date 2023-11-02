@@ -1,16 +1,24 @@
-import { Component } from 'react';
-import { ErrorBoundary } from './modules/ErrorBoundary';
-import { Page } from './modules/Page';
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Route,
+  RouterProvider,
+} from 'react-router-dom';
+//import { ErrorBoundary } from './modules/ErrorBoundary';
 import './App.scss';
+import { Layout } from './modules/Layout';
+import { DetailedPage } from './modules/DetailedPage';
 
-class App extends Component {
-  render() {
-    return (
-      <ErrorBoundary>
-        <Page />
-      </ErrorBoundary>
-    );
-  }
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path="/" element={<Layout />}>
+      <Route path="/" element={<DetailedPage />}></Route>
+    </Route>
+  )
+);
+
+function App() {
+  return <RouterProvider router={router} />;
 }
 
 export default App;

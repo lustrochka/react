@@ -1,123 +1,87 @@
-import { Component } from 'react';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { BeerList } from './Beer';
+import { Loader } from './Loader';
+import { Arrow } from './Arrow';
 import axios from 'axios';
-import imgUrl from '../assets/PIWO.svg';
-import searchUrl from '../assets/drawing-2.svg';
+import { SearchBlock } from './SearchBlock';
 import '../App.scss';
 
-interface responseItem {
-  id: number;
-  name: string;
-  description: string;
-  error: boolean;
-}
-
-export class Page extends Component {
-  state = {
-    beers: [],
-    searchString: localStorage.getItem('searchString') || '',
-    loadingClass: 'loading',
-    resClass: 'results hiding',
-    nothingClass: 'not-found hiding',
-    error: false,
+export function Page() {
+  const [, setSearchParams] = useSearchParams({});
+  const [beers, setBeers] = useState([]);
+  const [searchString, setSearchString] = useState(
+    localStorage.getItem('searchString') || ''
+  );
+  const [loadingClass, setLoadingClass] = useState('loading');
+  const [resClass, setResClass] = useState('results hiding');
+  const [nothingClass, setNothingClass] = useState('not-found hiding');
+  const [page, setPage] = useState(1);
+  const changePage = (newPage: number) => {
+    setPage(newPage);
   };
-  componentDidMount(): void {
-    this.search();
-  }
-  componentDidUpdate() {
-    if (this.state.error) throw new Error('This is an error');
-  }
-  search() {
-    const BASE_URL = 'https://api.punkapi.com/v2/beers/';
-    const url = this.state.searchString
-      ? `${BASE_URL}?beer_name=${this.state.searchString.replace(' ', '_')}`
-      : BASE_URL;
+  const changeSearchString = (newSearchString: string) => {
+    setSearchString(newSearchString);
+  };
+  const changeVisibility = () => {
+    setLoadingClass('loading');
+    setResClass('results hiding');
+    setNothingClass('not-found hiding');
+  };
+  useEffect(() => {
+    search();
+    setSearchParams({ page: page.toString() });
+  }, [page, resClass]);
+  function search() {
+    const BASE_URL = 'https://api.punkapi.com/v2/beers';
+    const url = searchString
+      ? `${BASE_URL}?beer_name=${searchString.replace(
+          ' ',
+          '_'
+        )}&page=${page}&per_page=10`
+      : `${BASE_URL}?page=${page}&per_page=10`;
     axios.get(url).then((res) => {
       if (res.data.length > 0) {
-        this.setState({
-          loadingClass: 'loading hiding',
-          resClass: 'results',
-          nothingClass: 'not-found hiding',
-          beers: res.data,
-        });
+        setLoadingClass('loading hiding');
+        setResClass('results');
+        setNothingClass('not-found hiding');
+        setBeers(res.data);
       } else {
-        this.setState({
-          loadingClass: 'loading hiding',
-          nothingClass: 'not-found',
-        });
+        setLoadingClass('loading hiding');
+        setNothingClass('not-found');
       }
     });
   }
-  render() {
-    return (
-      <>
-        <div className="top-section">
-          <button
-            className="error-button"
-            onClick={() => {
-              this.setState({ error: true });
-            }}
-          >
-            Make an error
-          </button>
-          <div className="search-block">
-            <div>Find beer</div>
-            <div className="search">
-              <input
-                type="search"
-                value={this.state.searchString}
-                className="search-input"
-                onChange={(event) =>
-                  this.setState({ searchString: event.target.value.trim() })
-                }
-              ></input>
-              <div
-                className="loupe"
-                onClick={() => {
-                  this.setState({
-                    loadingClass: 'loading',
-                    resClass: 'results hiding',
-                    nothingClass: 'not-found hiding',
-                  });
-                  localStorage.setItem('searchString', this.state.searchString);
-                  this.search();
-                }}
-              >
-                <img src={searchUrl}></img>
-              </div>
-            </div>
-          </div>
+  return (
+    <>
+      <div className="top-section">
+        <SearchBlock
+          changePage={changePage}
+          changeVisibility={changeVisibility}
+          search={search}
+          searchString={searchString}
+          changeSearchString={changeSearchString}
+        />
+      </div>
+      <div className="bottom-section">
+        <Loader className={loadingClass} /> {/*???*/}
+        <h2 className={nothingClass}>Nothing found :(</h2>
+        <div className={resClass}>
+          <BeerList items={beers} />
         </div>
-        <div className="bottom-section">
-          <div className={this.state.loadingClass}>
-            <div>
-              <img src={imgUrl} className="bubble"></img>
-            </div>
-            <div>
-              <img src={imgUrl} className="bubble"></img>
-            </div>
-            <div>
-              <img src={imgUrl} className="bubble"></img>
-            </div>
-            <div>
-              <img src={imgUrl} className="bubble"></img>
-            </div>
-            <div>
-              <img src={imgUrl} className="bubble"></img>
-            </div>
-          </div>
-          <h2 className={this.state.nothingClass}>Nothing found :(</h2>
-          <div className={this.state.resClass}>
-            <div className="beer-container">
-              {this.state.beers.map((item: responseItem) => (
-                <div key={item.id.toString()} className="beer-item">
-                  <h3>{item.name}</h3>
-                  <div>{item.description}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  }
+        <Arrow
+          direction="left"
+          page={page}
+          change={changePage}
+          changeVisibility={changeVisibility}
+        />
+        <Arrow
+          direction="right"
+          page={page}
+          change={changePage}
+          changeVisibility={changeVisibility}
+        />
+      </div>
+    </>
+  );
 }
