@@ -55,6 +55,14 @@ input {
   outline: none;
 }
 
+.page {
+  display: flex;
+}
+
+.main-page {
+  width: 100%;
+}
+
 .top-section {
   padding: 30px;
   background-color: #1a1a1a;
@@ -104,6 +112,7 @@ input {
 }
 
 .bottom-section {
+  position: relative;
   background-color: #bf7232;
   height: 100%;
   min-height: 100vh;
@@ -153,6 +162,9 @@ input {
   border-radius: 5px;
   font-size: 12px;
   background-color: rgb(239, 236, 174);
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .error-block {

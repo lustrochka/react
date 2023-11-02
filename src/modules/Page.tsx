@@ -8,7 +8,7 @@ import { SearchBlock } from './SearchBlock';
 import '../App.scss';
 
 export function Page() {
-  const [, setSearchParams] = useSearchParams({});
+  const [searchParams, setSearchParams] = useSearchParams();
   const [beers, setBeers] = useState([]);
   const [searchString, setSearchString] = useState(
     localStorage.getItem('searchString') || ''
@@ -27,6 +27,12 @@ export function Page() {
     setLoadingClass('loading');
     setResClass('results hiding');
     setNothingClass('not-found hiding');
+  };
+  const changeUrl = () => {
+    if (searchParams.get('details')) {
+      searchParams.delete('details');
+      setSearchParams(searchParams);
+    }
   };
   useEffect(() => {
     search();
@@ -54,33 +60,35 @@ export function Page() {
   }
   return (
     <>
-      <div className="top-section">
-        <SearchBlock
-          changePage={changePage}
-          changeVisibility={changeVisibility}
-          search={search}
-          searchString={searchString}
-          changeSearchString={changeSearchString}
-        />
-      </div>
-      <div className="bottom-section">
-        <Loader className={loadingClass} /> {/*???*/}
-        <h2 className={nothingClass}>Nothing found :(</h2>
-        <div className={resClass}>
-          <BeerList items={beers} />
+      <div className="main-page" onClick={changeUrl}>
+        <div className="top-section">
+          <SearchBlock
+            changePage={changePage}
+            changeVisibility={changeVisibility}
+            search={search}
+            searchString={searchString}
+            changeSearchString={changeSearchString}
+          />
         </div>
-        <Arrow
-          direction="left"
-          page={page}
-          change={changePage}
-          changeVisibility={changeVisibility}
-        />
-        <Arrow
-          direction="right"
-          page={page}
-          change={changePage}
-          changeVisibility={changeVisibility}
-        />
+        <div className="bottom-section">
+          <Loader className={loadingClass} /> {/*???*/}
+          <h2 className={nothingClass}>Nothing found :(</h2>
+          <div className={resClass}>
+            <BeerList items={beers} />
+          </div>
+          <Arrow
+            direction="left"
+            page={page}
+            change={changePage}
+            changeVisibility={changeVisibility}
+          />
+          <Arrow
+            direction="right"
+            page={page}
+            change={changePage}
+            changeVisibility={changeVisibility}
+          />
+        </div>
       </div>
     </>
   );

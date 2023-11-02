@@ -7,7 +7,7 @@ import {
 //import { ErrorBoundary } from './modules/ErrorBoundary';
 import './App.scss';
 import { Layout } from './modules/Layout';
-import { DetailedPage } from './modules/DetailedPage';
+import { DetailedPage } from './modules/DetailedPage/DetailedPage';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
