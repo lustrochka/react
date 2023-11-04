@@ -6,13 +6,13 @@ import { Loader } from '../Loader';
 
 export function DetailedPage() {
   const [id]: [id: string] = useOutletContext();
-  const [loadClass, setLoadClass] = useState('loading');
   const [name, setName] = useState('');
   const [imgUrl, setImgUrl] = useState('');
   const [description, setDescription] = useState('');
   //const [ingredients, setIngredients] = useState({});
   const [abv, setAbv] = useState('');
   const [searchParams, setSearchParams] = useSearchParams();
+  const [isLoading, setIsLoading] = useState(true);
   const changeUrl = () => {
     searchParams.delete('details');
     setSearchParams(searchParams);
@@ -24,7 +24,7 @@ export function DetailedPage() {
     const BASE_URL = 'https://api.punkapi.com/v2/beers';
     const url = `${BASE_URL}/${id}`;
     axios.get(url).then((res) => {
-      setLoadClass('loading hiding');
+      setIsLoading(false);
       const data = res.data[0];
       setName(data.name);
       setImgUrl(data.image_url);
@@ -39,7 +39,7 @@ export function DetailedPage() {
         ✖
       </div>
       <div className="details-item">
-        <Loader className={loadClass} />
+        {isLoading && <Loader />}
         <h2>{name}</h2>
         <img src={imgUrl} className="beer-image"></img>
         <div>{description}</div>

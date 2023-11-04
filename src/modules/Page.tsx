@@ -8,25 +8,43 @@ import { SearchBlock } from './SearchBlock';
 import '../App.scss';
 
 export function Page() {
+  const BASE_URL = 'https://api.punkapi.com/v2/beers';
   const [searchParams, setSearchParams] = useSearchParams();
   const [beers, setBeers] = useState([]);
   const [searchString, setSearchString] = useState(
     localStorage.getItem('searchString') || ''
   );
-  const [loadingClass, setLoadingClass] = useState('loading');
-  const [resClass, setResClass] = useState('results hiding');
-  const [nothingClass, setNothingClass] = useState('not-found hiding');
-  const [page, setPage] = useState(1);
-  const changePage = (newPage: number) => {
-    setPage(newPage);
+  const [isLoaded, setIsloaded] = useState(false);
+  const [value, setValue] = useState('10');
+  const page = searchParams.get('page') || '1';
+  const [isLoading, setIsLoading] = useState(false);
+  //let value = localStorage.getItem('per-page') || '10';
+  const changePage = (newPage: string) => {
+    const url = searchString
+      ? `${BASE_URL}?beer_name=${searchString.replace(
+          ' ',
+          '_'
+        )}&page=${newPage}&per_page=${value}`
+      : `${BASE_URL}?page=${newPage}&per_page=${value}`;
+    if (Number(newPage) > 0)
+      axios.get(url).then((res) => {
+        if (res.data.length > 0) {
+          changeVisibility();
+          setSearchParams({ page: newPage });
+        }
+      });
   };
   const changeSearchString = (newSearchString: string) => {
     setSearchString(newSearchString);
   };
+  const changeArrow = (newBoolean: boolean) => {
+    setIsloaded(newBoolean);
+  };
+  const changeValue = (newValue: string) => {
+    setValue(newValue);
+  };
   const changeVisibility = () => {
-    setLoadingClass('loading');
-    setResClass('results hiding');
-    setNothingClass('not-found hiding');
+    setIsLoading(true);
   };
   const changeUrl = () => {
     if (searchParams.get('details')) {
@@ -37,25 +55,18 @@ export function Page() {
   useEffect(() => {
     search();
     setSearchParams({ page: page.toString() });
-  }, [page, resClass]);
+  }, [page, isLoading]);
   function search() {
-    const BASE_URL = 'https://api.punkapi.com/v2/beers';
     const url = searchString
       ? `${BASE_URL}?beer_name=${searchString.replace(
           ' ',
           '_'
-        )}&page=${page}&per_page=10`
-      : `${BASE_URL}?page=${page}&per_page=10`;
+        )}&page=${page}&per_page=${value}`
+      : `${BASE_URL}?page=${page}&per_page=${value}`;
     axios.get(url).then((res) => {
-      if (res.data.length > 0) {
-        setLoadingClass('loading hiding');
-        setResClass('results');
-        setNothingClass('not-found hiding');
-        setBeers(res.data);
-      } else {
-        setLoadingClass('loading hiding');
-        setNothingClass('not-found');
-      }
+      setIsLoading(false);
+      setBeers(res.data);
+      if (res.data.length > 0) setIsloaded(true);
     });
   }
   return (
@@ -63,31 +74,23 @@ export function Page() {
       <div className="main-page" onClick={changeUrl}>
         <div className="top-section">
           <SearchBlock
-            changePage={changePage}
-            changeVisibility={changeVisibility}
-            search={search}
             searchString={searchString}
             changeSearchString={changeSearchString}
+            changeVisibility={changeVisibility}
+            changeArrow={changeArrow}
+            value={value}
+            changeValue={changeValue}
           />
         </div>
         <div className="bottom-section">
-          <Loader className={loadingClass} /> {/*???*/}
-          <h2 className={nothingClass}>Nothing found :(</h2>
-          <div className={resClass}>
-            <BeerList items={beers} />
-          </div>
-          <Arrow
-            direction="left"
-            page={page}
-            change={changePage}
-            changeVisibility={changeVisibility}
-          />
-          <Arrow
-            direction="right"
-            page={page}
-            change={changePage}
-            changeVisibility={changeVisibility}
-          />
+          {isLoading && <Loader />}
+          {!isLoading && (
+            <div className="results">
+              <BeerList items={beers} />
+            </div>
+          )}
+          {isLoaded && <Arrow direction="left" change={changePage} />}
+          {isLoaded && <Arrow direction="right" change={changePage} />}
         </div>
       </div>
     </>

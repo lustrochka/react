@@ -1,20 +1,20 @@
+import { useSearchParams } from 'react-router-dom';
 export function Arrow({
   direction,
-  page,
   change,
-  changeVisibility,
 }: {
   direction: string;
-  page: number;
-  change: (newPage: number) => void;
-  changeVisibility: () => void;
+  change: (newPage: string) => void;
 }) {
+  const [searchParams] = useSearchParams();
+  const page = searchParams.get('page') || 1;
   return (
     <div
       className="arrow"
       onClick={() => {
-        direction == 'left' ? change(page - 1) : change(page + 1);
-        changeVisibility();
+        direction == 'left'
+          ? change((Number(page) - 1).toString())
+          : change((Number(page) + 1).toString());
       }}
     >
       {direction == 'left' ? '🠘' : '🠚'}

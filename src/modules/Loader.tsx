@@ -1,8 +1,8 @@
 import imgUrl from '../assets/PIWO.svg';
 
-export function Loader({ className }: { className: string }) {
+export function Loader() {
   return (
-    <div className={className}>
+    <div className="loading">
       <div>
         <img src={imgUrl} className="bubble"></img>
       </div>
