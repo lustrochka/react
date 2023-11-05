@@ -23,15 +23,19 @@ export function DetailedPage() {
   function search(id: string) {
     const BASE_URL = 'https://api.punkapi.com/v2/beers';
     const url = `${BASE_URL}/${id}`;
-    axios.get(url).then((res) => {
-      setIsLoading(false);
-      const data = res.data[0];
-      setName(data.name);
-      setImgUrl(data.image_url);
-      setDescription(data.description);
-      //setIngredients(data.ingredients);
-      setAbv(`Alcohol: ${data.abv}%`);
-    });
+    axios
+      .get(url)
+      .then((res) => {
+        setIsLoading(false);
+        const data = res.data[0];
+        setName(data.name);
+        setImgUrl(data.image_url);
+        setDescription(data.description);
+        setAbv(`Alcohol: ${data.abv}%`);
+      })
+      .catch(() => {
+        throw new Error('Wrong item number');
+      });
   }
   return (
     <div className="details">

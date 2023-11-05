@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useLocation } from 'react-router-dom';
 import { BeerList } from './Beer';
 import { Loader } from './Loader';
 import { Arrow } from './Arrow';
@@ -9,6 +9,7 @@ import '../App.scss';
 
 export function Page() {
   const BASE_URL = 'https://api.punkapi.com/v2/beers';
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [beers, setBeers] = useState([]);
   const [searchString, setSearchString] = useState(
@@ -18,7 +19,6 @@ export function Page() {
   const [value, setValue] = useState('10');
   const page = searchParams.get('page') || '1';
   const [isLoading, setIsLoading] = useState(false);
-  //let value = localStorage.getItem('per-page') || '10';
   const changePage = (newPage: string) => {
     const url = searchString
       ? `${BASE_URL}?beer_name=${searchString.replace(
@@ -54,20 +54,23 @@ export function Page() {
   };
   useEffect(() => {
     search();
-    setSearchParams({ page: page.toString() });
-  }, [page, isLoading]);
+  }, [location]);
   function search() {
+    changeVisibility();
     const url = searchString
       ? `${BASE_URL}?beer_name=${searchString.replace(
           ' ',
           '_'
         )}&page=${page}&per_page=${value}`
       : `${BASE_URL}?page=${page}&per_page=${value}`;
-    axios.get(url).then((res) => {
-      setIsLoading(false);
-      setBeers(res.data);
-      if (res.data.length > 0) setIsloaded(true);
-    });
+    axios
+      .get(url)
+      .then((res) => {
+        setIsLoading(false);
+        setBeers(res.data);
+        if (res.data.length > 0) setIsloaded(true);
+      })
+      .catch(() => setSearchParams({ page: '1' }));
   }
   return (
     <>

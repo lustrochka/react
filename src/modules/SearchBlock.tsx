@@ -42,6 +42,7 @@ export function SearchBlock({
         </div>
       </div>
       <select
+        className="per-page-input"
         value={value}
         onChange={(e) => {
           changeVisibility();
@@ -56,6 +57,7 @@ export function SearchBlock({
         <option>15</option>
         <option>20</option>
       </select>
+      <span> per page</span>
     </div>
   );
 }
