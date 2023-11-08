@@ -1,8 +1,8 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useOutletContext, useSearchParams } from 'react-router-dom';
 import './details.scss';
 import { Loader } from '../Loader';
+import { searchItem } from '../API/Api';
 
 export function DetailedPage() {
   const [id]: [id: string] = useOutletContext();
@@ -21,10 +21,8 @@ export function DetailedPage() {
     search(id);
   });
   function search(id: string) {
-    const BASE_URL = 'https://api.punkapi.com/v2/beers';
-    const url = `${BASE_URL}/${id}`;
-    axios
-      .get(url)
+    const result = searchItem(id);
+    result
       .then((res) => {
         setIsLoading(false);
         const data = res.data[0];

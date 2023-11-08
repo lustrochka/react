@@ -1,7 +1,10 @@
 import { responseItem } from '../types';
 import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { ListContext } from './Context';
 
-export function BeerList({ items }: { items: responseItem[] }) {
+export function BeerList() {
+  const { beers } = useContext(ListContext);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const goToItem = (id: number) => {
@@ -12,7 +15,7 @@ export function BeerList({ items }: { items: responseItem[] }) {
   };
   return (
     <div className="beer-container">
-      {items.map((item: responseItem) => (
+      {beers.map((item: responseItem) => (
         <div
           className="beer-item"
           key={item.id.toString()}

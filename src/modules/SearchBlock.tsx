@@ -1,22 +1,21 @@
 import { useSearchParams } from 'react-router-dom';
+import { useContext } from 'react';
+import { SearchContext } from './Context';
 import searchUrl from '../assets/drawing-2.svg';
 
 export function SearchBlock({
-  changeVisibility,
-  searchString,
-  changeSearchString,
+  setIsLoading,
   changeArrow,
   value,
   changeValue,
 }: {
-  changeVisibility: () => void;
-  searchString: string;
-  changeSearchString: (newSearchString: string) => void;
+  setIsLoading: (isLoading: boolean) => void;
   changeArrow: (newBoolean: boolean) => void;
   value: string;
   changeValue: (newValue: string) => void;
 }) {
   const [, setSearchParams] = useSearchParams();
+  const { searchString, setSearchString } = useContext(SearchContext);
   return (
     <div className="search-block">
       <div>
@@ -26,12 +25,12 @@ export function SearchBlock({
             type="search"
             value={searchString}
             className="search-input"
-            onChange={(event) => changeSearchString(event.target.value.trim())}
+            onChange={(event) => setSearchString(event.target.value.trim())}
           ></input>
           <div
             className="loupe"
             onClick={() => {
-              changeVisibility();
+              setIsLoading(true);
               setSearchParams({ page: '1' });
               changeArrow(false);
               localStorage.setItem('searchString', searchString);
@@ -45,7 +44,7 @@ export function SearchBlock({
         className="per-page-input"
         value={value}
         onChange={(e) => {
-          changeVisibility();
+          setIsLoading(true);
           changeValue(e.target.value);
           setSearchParams({ page: '1' });
           changeArrow(false);

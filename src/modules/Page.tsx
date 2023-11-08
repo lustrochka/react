@@ -1,17 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, useLocation } from 'react-router-dom';
-import { BeerList } from './Beer';
+import { BeerList } from './ItemsList';
 import { Loader } from './Loader';
 import { Arrow } from './Arrow';
-import axios from 'axios';
 import { SearchBlock } from './SearchBlock';
+import { SearchContext, ListContext } from './Context';
+import { searchItems, searchPage } from './API/Api';
+import { responseItem } from '../types';
 import '../App.scss';
 
 export function Page() {
-  const BASE_URL = 'https://api.punkapi.com/v2/beers';
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [beers, setBeers] = useState([]);
+  const [beers, setBeers] = useState<responseItem[]>([]);
   const [searchString, setSearchString] = useState(
     localStorage.getItem('searchString') || ''
   );
@@ -20,31 +21,15 @@ export function Page() {
   const page = searchParams.get('page') || '1';
   const [isLoading, setIsLoading] = useState(false);
   const changePage = (newPage: string) => {
-    const url = searchString
-      ? `${BASE_URL}?beer_name=${searchString.replace(
-          ' ',
-          '_'
-        )}&page=${newPage}&per_page=${value}`
-      : `${BASE_URL}?page=${newPage}&per_page=${value}`;
-    if (Number(newPage) > 0)
-      axios.get(url).then((res) => {
+    if (Number(newPage) > 0) {
+      const response = searchPage(searchString, newPage, value);
+      response.then((res) => {
         if (res.data.length > 0) {
-          changeVisibility();
+          setIsLoading(true);
           setSearchParams({ page: newPage });
         }
       });
-  };
-  const changeSearchString = (newSearchString: string) => {
-    setSearchString(newSearchString);
-  };
-  const changeArrow = (newBoolean: boolean) => {
-    setIsloaded(newBoolean);
-  };
-  const changeValue = (newValue: string) => {
-    setValue(newValue);
-  };
-  const changeVisibility = () => {
-    setIsLoading(true);
+    }
   };
   const changeUrl = () => {
     if (searchParams.get('details')) {
@@ -56,15 +41,9 @@ export function Page() {
     search();
   }, [location]);
   function search() {
-    changeVisibility();
-    const url = searchString
-      ? `${BASE_URL}?beer_name=${searchString.replace(
-          ' ',
-          '_'
-        )}&page=${page}&per_page=${value}`
-      : `${BASE_URL}?page=${page}&per_page=${value}`;
-    axios
-      .get(url)
+    setIsLoading(true);
+    const result = searchItems(searchString, page, value);
+    result
       .then((res) => {
         setIsLoading(false);
         setBeers(res.data);
@@ -76,20 +55,22 @@ export function Page() {
     <>
       <div className="main-page" onClick={changeUrl}>
         <div className="top-section">
-          <SearchBlock
-            searchString={searchString}
-            changeSearchString={changeSearchString}
-            changeVisibility={changeVisibility}
-            changeArrow={changeArrow}
-            value={value}
-            changeValue={changeValue}
-          />
+          <SearchContext.Provider value={{ searchString, setSearchString }}>
+            <SearchBlock
+              setIsLoading={setIsLoading}
+              changeArrow={setIsloaded}
+              value={value}
+              changeValue={setValue}
+            />
+          </SearchContext.Provider>
         </div>
         <div className="bottom-section">
           {isLoading && <Loader />}
           {!isLoading && (
             <div className="results">
-              <BeerList items={beers} />
+              <ListContext.Provider value={{ beers, setBeers }}>
+                <BeerList />
+              </ListContext.Provider>
             </div>
           )}
           {isLoaded && <Arrow direction="left" change={changePage} />}
