@@ -82,6 +82,7 @@ select {
 }
 
 .search {
+  height: 40px;
   display: flex;
   justify-content: space-between;
   margin-top: 10px;
@@ -98,11 +99,11 @@ select {
 }
 
 .loupe {
+  background-image: url(./assets/drawing-2.svg);
+  background-size: contain;
+  background-repeat: no-repeat;
   width: 20px;
   margin: 5px 8px 0;
-  img {
-    width: 100%;
-  }
   &:hover {
     cursor: pointer;
   }

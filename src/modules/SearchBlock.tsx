@@ -1,7 +1,7 @@
 import { useSearchParams } from 'react-router-dom';
 import { useContext } from 'react';
 import { SearchContext } from './Context';
-import searchUrl from '../assets/drawing-2.svg';
+//import searchUrl from '../assets/drawing-2.svg';
 
 export function SearchBlock({
   setIsLoading,
@@ -35,9 +35,7 @@ export function SearchBlock({
               changeArrow(false);
               localStorage.setItem('searchString', searchString);
             }}
-          >
-            <img src={searchUrl}></img>
-          </div>
+          ></div>
         </div>
       </div>
       <select
