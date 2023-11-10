@@ -1,7 +1,6 @@
 import { useSearchParams } from 'react-router-dom';
 import { useContext } from 'react';
 import { SearchContext } from './Context';
-//import searchUrl from '../assets/drawing-2.svg';
 
 export function SearchBlock({
   setIsLoading,

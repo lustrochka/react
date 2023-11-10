@@ -9,7 +9,6 @@ export function DetailedPage() {
   const [name, setName] = useState('');
   const [imgUrl, setImgUrl] = useState('');
   const [description, setDescription] = useState('');
-  //const [ingredients, setIngredients] = useState({});
   const [abv, setAbv] = useState('');
   const [searchParams, setSearchParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState(true);

@@ -1,21 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useSearchParams, useLocation } from 'react-router-dom';
-import { BeerList } from './ItemsList';
+import { CardsList } from './CardsList';
 import { Loader } from './Loader';
 import { Arrow } from './Arrow';
 import { SearchBlock } from './SearchBlock';
-import { SearchContext, ListContext } from './Context';
 import { searchItems, searchPage } from './API/Api';
-import { responseItem } from '../types';
+import { SearchContext } from './Context';
 import '../App.scss';
 
 export function Page() {
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [beers, setBeers] = useState<responseItem[]>([]);
-  const [searchString, setSearchString] = useState(
-    localStorage.getItem('searchString') || ''
-  );
+  const { searchString, setBeers } = useContext(SearchContext);
   const [isLoaded, setIsloaded] = useState(false);
   const [value, setValue] = useState('10');
   const page = searchParams.get('page') || '1';
@@ -55,22 +51,18 @@ export function Page() {
     <>
       <div className="main-page" onClick={changeUrl}>
         <div className="top-section">
-          <SearchContext.Provider value={{ searchString, setSearchString }}>
-            <SearchBlock
-              setIsLoading={setIsLoading}
-              changeArrow={setIsloaded}
-              value={value}
-              changeValue={setValue}
-            />
-          </SearchContext.Provider>
+          <SearchBlock
+            setIsLoading={setIsLoading}
+            changeArrow={setIsloaded}
+            value={value}
+            changeValue={setValue}
+          />
         </div>
         <div className="bottom-section">
           {isLoading && <Loader />}
           {!isLoading && (
             <div className="results">
-              <ListContext.Provider value={{ beers, setBeers }}>
-                <BeerList />
-              </ListContext.Provider>
+              <CardsList />
             </div>
           )}
           {isLoaded && <Arrow direction="left" change={changePage} />}
