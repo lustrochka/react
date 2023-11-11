@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import { SearchBlock } from '../modules/SearchBlock';
 import { Route, Routes, BrowserRouter } from 'react-router-dom';
-import { SearchContext, SearchProvider } from '../modules/Context';
+import { SearchProvider } from '../modules/Context';
 import userEvent from '@testing-library/user-event';
 
 const setIsLoading = jest.fn();
