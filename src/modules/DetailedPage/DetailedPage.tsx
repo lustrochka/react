@@ -5,7 +5,7 @@ import { Loader } from '../Loader';
 import { searchItem } from '../API/Api';
 
 export function DetailedPage() {
-  const [id]: [id: string] = useOutletContext();
+  const { id }: { id: string } = useOutletContext() || '1';
   const [name, setName] = useState('');
   const [imgUrl, setImgUrl] = useState('');
   const [description, setDescription] = useState('');

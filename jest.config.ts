@@ -3,9 +3,11 @@ export default {
   testEnvironment: 'jest-environment-jsdom',
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
+    '.+\\.(css|styl|less|sass|scss|png|jpg|ttf|woff|woff2)$':
+      'jest-transform-stub',
   },
   moduleNameMapper: {
-    '\\.(gif|ttf|eot|svg|png)$': '<rootDir>/test/__ mocks __/fileMock.js',
-    //'\\.(css|less|scss|sass|svg)$': 'identity-obj-proxy',
+    '\\.(css|less}scss)$': 'identity-obj-proxy',
+    '\\.(gif|ttf|eot|svg|png)$': 'jest-transform-stub',
   },
 };
