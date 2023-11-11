@@ -7,6 +7,7 @@ export function CardsList() {
   const { beers } = useContext(SearchContext);
   return (
     <div className="beer-container">
+      {beers.length == 0 && <div className="notfound">Nothing found:(</div>}
       {beers.map((item: responseItem) => (
         <Card item={item} key={item.id.toString()}></Card>
       ))}

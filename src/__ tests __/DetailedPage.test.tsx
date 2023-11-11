@@ -1,11 +1,9 @@
 import '@testing-library/jest-dom';
-import { fireEvent, getByRole, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { DetailedPage } from '../modules/DetailedPage/DetailedPage';
 import { Route, Routes, BrowserRouter } from 'react-router-dom';
 import { act } from 'react-dom/test-utils';
 import axios from 'axios';
-import userEvent from '@testing-library/user-event';
-import { waitForElementToBeRemoved } from '@testing-library/react';
 
 jest.mock('axios');
 
