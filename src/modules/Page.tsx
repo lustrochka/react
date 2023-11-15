@@ -15,7 +15,7 @@ export function Page() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { setBeers } = useContext(SearchContext);
   const [isLoaded, setIsloaded] = useState(false);
-  const [value, setValue] = useState('10');
+  const value = useSelector((state: RootState) => state.value.value);
   const page = searchParams.get('page') || '1';
   const [isLoading, setIsLoading] = useState(false);
   const searchString = useSelector(
@@ -56,12 +56,7 @@ export function Page() {
     <>
       <div className="main-page" onClick={changeUrl}>
         <div className="top-section">
-          <SearchBlock
-            setIsLoading={setIsLoading}
-            changeArrow={setIsloaded}
-            value={value}
-            changeValue={setValue}
-          />
+          <SearchBlock setIsLoading={setIsLoading} changeArrow={setIsloaded} />
         </div>
         <div className="bottom-section">
           {isLoading && <Loader />}

@@ -1,24 +1,22 @@
 import { useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSearchString } from '../store/slices/SearchStringSlice';
+import { setValue } from '../store/slices/ItemsPerPageSlice';
 import { RootState } from '../store/store';
 
 export function SearchBlock({
   setIsLoading,
   changeArrow,
-  value,
-  changeValue,
 }: {
   setIsLoading: (isLoading: boolean) => void;
   changeArrow: (newBoolean: boolean) => void;
-  value: string;
-  changeValue: (newValue: string) => void;
 }) {
   const dispatch = useDispatch();
   const [, setSearchParams] = useSearchParams();
   const searchString = useSelector(
     (state: RootState) => state.search.searchString
   );
+  const value = useSelector((state: RootState) => state.value.value);
   return (
     <div className="search-block">
       <div>
@@ -49,10 +47,9 @@ export function SearchBlock({
         value={value}
         onChange={(e) => {
           setIsLoading(true);
-          changeValue(e.target.value);
+          dispatch(setValue(e.target.value));
           setSearchParams({ page: '1' });
           changeArrow(false);
-          localStorage.setItem('per-page', e.target.value);
         }}
       >
         <option>5</option>
