@@ -6,16 +6,21 @@ import { Arrow } from './Arrow';
 import { SearchBlock } from './SearchBlock';
 import { searchItems, searchPage } from './API/Api';
 import { SearchContext } from './Context';
+import { useSelector } from 'react-redux';
 import '../App.scss';
+import { RootState } from '../store/store';
 
 export function Page() {
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { searchString, setBeers } = useContext(SearchContext);
+  const { setBeers } = useContext(SearchContext);
   const [isLoaded, setIsloaded] = useState(false);
   const [value, setValue] = useState('10');
   const page = searchParams.get('page') || '1';
   const [isLoading, setIsLoading] = useState(false);
+  const searchString = useSelector(
+    (state: RootState) => state.search.searchString
+  );
   const changePage = (newPage: string) => {
     if (Number(newPage) > 0) {
       const response = searchPage(searchString, newPage, value);

@@ -1,6 +1,7 @@
 import { useSearchParams } from 'react-router-dom';
-import { useContext } from 'react';
-import { SearchContext } from './Context';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSearchString } from '../store/slices/SearchStringSlice';
+import { RootState } from '../store/store';
 
 export function SearchBlock({
   setIsLoading,
@@ -13,8 +14,11 @@ export function SearchBlock({
   value: string;
   changeValue: (newValue: string) => void;
 }) {
+  const dispatch = useDispatch();
   const [, setSearchParams] = useSearchParams();
-  const { searchString, setSearchString } = useContext(SearchContext);
+  const searchString = useSelector(
+    (state: RootState) => state.search.searchString
+  );
   return (
     <div className="search-block">
       <div>
@@ -24,7 +28,9 @@ export function SearchBlock({
             type="search"
             value={searchString}
             className="search-input"
-            onChange={(event) => setSearchString(event.target.value.trim())}
+            onChange={(event) =>
+              dispatch(setSearchString(event.target.value.trim()))
+            }
           ></input>
           <div
             className="loupe"
@@ -32,6 +38,7 @@ export function SearchBlock({
               setIsLoading(true);
               setSearchParams({ page: '1' });
               changeArrow(false);
+              dispatch(setSearchString(searchString));
               localStorage.setItem('searchString', searchString);
             }}
           ></div>
