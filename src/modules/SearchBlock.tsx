@@ -3,19 +3,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setSearchString } from '../store/slices/SearchStringSlice';
 import { setValue } from '../store/slices/ItemsPerPageSlice';
 import { RootState } from '../store/store';
+import { useState } from 'react';
+import { setIsLoaded } from '../store/slices/flagsSlice';
 
-export function SearchBlock({
-  setIsLoading,
-  changeArrow,
-}: {
-  setIsLoading: (isLoading: boolean) => void;
-  changeArrow: (newBoolean: boolean) => void;
-}) {
+export function SearchBlock() {
   const dispatch = useDispatch();
   const [, setSearchParams] = useSearchParams();
   const searchString = useSelector(
     (state: RootState) => state.search.searchString
   );
+  const [inputValue, setInputValue] = useState(searchString);
   const value = useSelector((state: RootState) => state.value.value);
   return (
     <div className="search-block">
@@ -24,19 +21,16 @@ export function SearchBlock({
         <div className="search">
           <input
             type="search"
-            value={searchString}
+            value={inputValue}
             className="search-input"
-            onChange={(event) =>
-              dispatch(setSearchString(event.target.value.trim()))
-            }
+            onChange={(event) => setInputValue(event.target.value.trim())}
           ></input>
           <div
             className="loupe"
             onClick={() => {
-              setIsLoading(true);
               setSearchParams({ page: '1' });
-              changeArrow(false);
-              dispatch(setSearchString(searchString));
+              dispatch(setSearchString(inputValue));
+              dispatch(setIsLoaded(false));
               localStorage.setItem('searchString', searchString);
             }}
           ></div>
@@ -46,10 +40,9 @@ export function SearchBlock({
         className="per-page-input"
         value={value}
         onChange={(e) => {
-          setIsLoading(true);
           dispatch(setValue(e.target.value));
           setSearchParams({ page: '1' });
-          changeArrow(false);
+          dispatch(setIsLoaded(false));
         }}
       >
         <option>5</option>

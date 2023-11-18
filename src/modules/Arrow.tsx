@@ -1,10 +1,11 @@
 import { useSearchParams } from 'react-router-dom';
+
 export function Arrow({
   direction,
-  change,
+  setNewPage,
 }: {
   direction: string;
-  change: (newPage: string) => void;
+  setNewPage: (newPage: string) => void;
 }) {
   const [searchParams] = useSearchParams();
   const page = searchParams.get('page') || 1;
@@ -13,8 +14,8 @@ export function Arrow({
       className="arrow"
       onClick={() => {
         direction == 'left'
-          ? change((Number(page) - 1).toString())
-          : change((Number(page) + 1).toString());
+          ? setNewPage((Number(page) - 1).toString())
+          : setNewPage((Number(page) + 1).toString());
       }}
     >
       {direction == 'left' ? '🠘' : '🠚'}
