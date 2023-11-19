@@ -31,7 +31,7 @@ export function SearchBlock() {
               setSearchParams({ page: '1' });
               dispatch(setSearchString(inputValue));
               dispatch(setIsLoaded(false));
-              localStorage.setItem('searchString', searchString);
+              localStorage.setItem('searchString', inputValue);
             }}
           ></div>
         </div>
