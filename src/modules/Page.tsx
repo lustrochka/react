@@ -8,7 +8,7 @@ import { useGetBeersQuery, useCheckPageQuery } from './API/Api';
 import { useDispatch, useSelector } from 'react-redux';
 import '../App.scss';
 import { RootState } from '../store/store';
-import { setIsLoaded } from '../store/slices/flagsSlice';
+import { setIsLoaded, setIsLoading } from '../store/slices/flagsSlice';
 
 export function Page() {
   const dispatch = useDispatch();
@@ -25,7 +25,12 @@ export function Page() {
     page,
     value,
   });
-  const { data = [] } = useCheckPageQuery({ searchString, newPage, value });
+  const { data = [] } = useCheckPageQuery(
+    { searchString, newPage, value },
+    {
+      skip: newPage == page,
+    }
+  );
 
   const changeUrl = () => {
     if (searchParams.get('details')) {
@@ -39,12 +44,13 @@ export function Page() {
     }
     if (error) setSearchParams({ page: '1' });
     if (isSuccess) dispatch(setIsLoaded(true));
+    dispatch(setIsLoading(isLoading));
   });
   return (
     <>
       <div className="main-page" onClick={changeUrl}>
         <div className="top-section">
-          <SearchBlock />
+          <SearchBlock setNewPage={setNewPage} />
         </div>
         <div className="bottom-section">
           {isLoading && <Loader />}

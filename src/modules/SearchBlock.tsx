@@ -6,9 +6,12 @@ import { RootState } from '../store/store';
 import { useState } from 'react';
 import { setIsLoaded } from '../store/slices/flagsSlice';
 
-export function SearchBlock() {
+export function SearchBlock({
+  setNewPage,
+}: {
+  setNewPage: (newPage: string) => void;
+}) {
   const dispatch = useDispatch();
-  const [, setSearchParams] = useSearchParams();
   const searchString = useSelector(
     (state: RootState) => state.search.searchString
   );
@@ -28,7 +31,7 @@ export function SearchBlock() {
           <div
             className="loupe"
             onClick={() => {
-              setSearchParams({ page: '1' });
+              setNewPage('1');
               dispatch(setSearchString(inputValue));
               dispatch(setIsLoaded(false));
               localStorage.setItem('searchString', inputValue);
@@ -40,8 +43,8 @@ export function SearchBlock() {
         className="per-page-input"
         value={value}
         onChange={(e) => {
+          setNewPage('1');
           dispatch(setValue(e.target.value));
-          setSearchParams({ page: '1' });
           dispatch(setIsLoaded(false));
         }}
       >

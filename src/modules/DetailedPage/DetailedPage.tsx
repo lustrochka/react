@@ -1,10 +1,13 @@
-import { useEffect, useState } from 'react';
-import { useOutletContext, useSearchParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import './details.scss';
 import { Loader } from '../Loader';
 import { useGetBeerQuery } from '../API/Api';
+import { useDispatch } from 'react-redux';
+import { setIsDetailLoading } from '../../store/slices/flagsSlice';
 
 export function DetailedPage() {
+  const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
   const id = searchParams.get('details') || '1';
   const { data = [], isLoading } = useGetBeerQuery(id);
@@ -12,6 +15,9 @@ export function DetailedPage() {
     searchParams.delete('details');
     setSearchParams(searchParams);
   };
+  useEffect(() => {
+    dispatch(setIsDetailLoading(isLoading));
+  });
   return (
     <div className="details">
       <div className="close-button" onClick={changeUrl}>
