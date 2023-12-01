@@ -1,17 +1,48 @@
 import { useRef } from 'react';
 
 function Form() {
-  const inputRefName = useRef(null);
-  const inputRefAge = useRef(null);
-  const inputRefEmail = useRef(null);
-  const inputRefPass = useRef(null);
-  const inputRefPass2 = useRef(null);
-  const inputRefSex = useRef(null);
-  const inputRefAccept = useRef(null);
-  const inputRefImg = useRef(null);
+  const inputRefName = useRef<HTMLInputElement>(null);
+  const inputRefAge = useRef<HTMLInputElement>(null);
+  const inputRefEmail = useRef<HTMLInputElement>(null);
+  const inputRefPass = useRef<HTMLInputElement>(null);
+  const inputRefPass2 = useRef<HTMLInputElement>(null);
+  const inputRefSex = useRef<HTMLSelectElement>(null);
+  const inputRefAccept = useRef<HTMLInputElement>(null);
+  const inputRefImg = useRef<HTMLInputElement>(null);
+  const checkData = () => {
+    const validName = /(?=.*[A-Z])/.test(inputRefName.current!.value);
+    const age = Number(inputRefAge.current!.value);
+    const validEmail = /\S+@\S+\.([A-Za-z]{2,4})$/.test(
+      inputRefEmail.current!.value
+    );
+    const validAge = Number.isFinite(age) && age > 0;
+    const validPass = /(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])/.test(
+      inputRefPass.current!.value
+    );
+    const matchPass =
+      inputRefPass.current!.value == inputRefPass2.current!.value;
+    const validTC = inputRefAccept.current!.checked;
+    const image = inputRefImg.current!.files;
+    const validImg =
+      image && image.length > 0 ? image[0].size < 2097152 : false;
+    return (
+      validName &&
+      validEmail &&
+      validAge &&
+      validPass &&
+      matchPass &&
+      validTC &&
+      validImg
+    );
+  };
   return (
     <div>
-      <form>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          checkData();
+        }}
+      >
         <div>
           <label htmlFor="name">Name: </label>
           <input id="name" type="text" ref={inputRefName}></input>
@@ -45,7 +76,11 @@ function Form() {
           <input type="checkbox" ref={inputRefAccept}></input>
         </div>
         <div>
-          <input type="file" ref={inputRefImg}></input>
+          <input
+            type="file"
+            ref={inputRefImg}
+            accept="image/png, image/jpeg"
+          ></input>
         </div>
         <button type="submit">Submit</button>
       </form>
