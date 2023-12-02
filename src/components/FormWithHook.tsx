@@ -1,6 +1,9 @@
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { setData2 } from '../store/slices/Form2Data';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 interface FormInput {
   name: string;
@@ -8,6 +11,7 @@ interface FormInput {
   email: string;
   password: string;
   password2: string;
+  //gender: string;
   //accept: boolean;
   //image: FileList;
 }
@@ -52,16 +56,23 @@ const schema = yup.object().shape({
 });
 
 function FormWithHook() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { isValid, errors },
   } = useForm<FormInput>({
     resolver: yupResolver<FormInput>(schema),
+    mode: 'onChange',
   });
+  function onSubmit(data: FormInput) {
+    dispatch(setData2(data));
+    navigate('/');
+  }
   return (
     <div>
-      <form onSubmit={handleSubmit((data) => console.log(data))}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <label htmlFor="name">Name: </label>
           <input id="name" type="text" {...register('name')}></input>
@@ -104,7 +115,9 @@ function FormWithHook() {
           <input type="file" {...register('image')}></input>
           {errors.image && <p>{errors.image.message}</p>}
   </div>*/}
-        <button type="submit">Submit</button>
+        <button type="submit" disabled={!isValid}>
+          Submit
+        </button>
       </form>
     </div>
   );

@@ -1,4 +1,7 @@
 import { useRef } from 'react';
+import { setData } from '../store/slices/Form1Data';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 function Form() {
   const inputRefName = useRef<HTMLInputElement>(null);
@@ -9,6 +12,9 @@ function Form() {
   const inputRefSex = useRef<HTMLSelectElement>(null);
   const inputRefAccept = useRef<HTMLInputElement>(null);
   const inputRefImg = useRef<HTMLInputElement>(null);
+  const inputRefError = useRef<HTMLParagraphElement>(null);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const checkData = () => {
     const validName = /(?=.*[A-Z])/.test(inputRefName.current!.value);
     const age = Number(inputRefAge.current!.value);
@@ -35,12 +41,28 @@ function Form() {
       validImg
     );
   };
+  const onSubmit = () => {
+    if (checkData()) {
+      inputRefError.current!.textContent = '';
+      dispatch(
+        setData({
+          name: inputRefName.current!.value,
+          age: inputRefAge.current!.value,
+          email: inputRefEmail.current!.value,
+          password: inputRefPass.current!.value,
+          gender: inputRefSex.current!.value,
+        })
+      );
+      navigate('/');
+    }
+    inputRefError.current!.textContent = 'Invalid data';
+  };
   return (
     <div>
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          checkData();
+          onSubmit();
         }}
       >
         <div>
@@ -48,32 +70,32 @@ function Form() {
           <input id="name" type="text" ref={inputRefName}></input>
         </div>
         <div>
-          <label>Age: </label>
-          <input type="number" ref={inputRefAge}></input>
+          <label htmlFor="age">Age: </label>
+          <input id="age" type="number" ref={inputRefAge}></input>
         </div>
         <div>
-          <label>E-mail: </label>
-          <input type="email" ref={inputRefEmail}></input>
+          <label htmlFor="email">E-mail: </label>
+          <input id="email" type="email" ref={inputRefEmail}></input>
         </div>
         <div>
-          <label>Password: </label>
-          <input type="password" ref={inputRefPass}></input>
+          <label htmlFor="password">Password: </label>
+          <input id="password" type="password" ref={inputRefPass}></input>
         </div>
         <div>
-          <label>Confirm Password: </label>
-          <input type="password" ref={inputRefPass2}></input>
+          <label htmlFor="password2">Confirm Password: </label>
+          <input id="password2" type="password" ref={inputRefPass2}></input>
         </div>
         <div>
-          <label>Gender: </label>
-          <select ref={inputRefSex}>
+          <label htmlFor="gender">Gender: </label>
+          <select id="gender" ref={inputRefSex}>
             <option value="Male">Male</option>
             <option value="Female">Female</option>
             <option value="Other">Other</option>
           </select>
         </div>
         <div>
-          <label>accept T&C </label>
-          <input type="checkbox" ref={inputRefAccept}></input>
+          <label htmlFor="accept">accept T&C </label>
+          <input id="accept" type="checkbox" ref={inputRefAccept}></input>
         </div>
         <div>
           <input
@@ -84,6 +106,7 @@ function Form() {
         </div>
         <button type="submit">Submit</button>
       </form>
+      <p ref={inputRefError}></p>
     </div>
   );
 }
